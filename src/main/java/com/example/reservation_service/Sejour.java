@@ -1,81 +1,90 @@
 package com.example.reservation_service;
 
 import java.time.LocalDate;
+import java.io.Serializable;
 
-public class Sejour {
-    private LocalDate dateDebut;
-    private LocalDate dateFin;
-    private double prix;
-    private String lieu;
-    private String titre;
-    private int nombreDePersonnes;
-    private String hote;
+public class Sejour implements Serializable {
+    private int id;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private double price;
+    private String location;
+    private String title;
+    private int maxGuests;
+    private Host host;
 
-    public Sejour(LocalDate dateDebut, LocalDate dateFin, double prix, String lieu, String titre, int nombreDePersonnes, String hote) {
-        this.dateDebut = dateDebut;
-        this.dateFin = dateFin;
-        this.prix = prix;
-        this.lieu = lieu;
-        this.titre = titre;
-        this.nombreDePersonnes = nombreDePersonnes;
-        this.hote = hote;
+    public Sejour(int id, LocalDate startDate, LocalDate endDate, double price, String location, String title, int maxGuests, Host host) {
+        this.id = id;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.price = price;
+        this.location = location;
+        this.title = title;
+        this.maxGuests = maxGuests;
+        this.host = host;
     }
 
-    // Getters et setters pour les propriétés
-
-    public LocalDate getDateDebut() {
-        return dateDebut;
+    public int getId() {
+        return id;
     }
 
-    public void setDateDebut(LocalDate dateDebut) {
-        this.dateDebut = dateDebut;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public LocalDate getDateFin() {
-        return dateFin;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setDateFin(LocalDate dateFin) {
-        this.dateFin = dateFin;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public double getPrix() {
-        return prix;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setPrix(double prix) {
-        this.prix = prix;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
-    public String getLieu() {
-        return lieu;
+    public double getPrice() {
+        return price;
     }
 
-    public void setLieu(String lieu) {
-        this.lieu = lieu;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
-    public String getTitre() {
-        return titre;
+    public String getLocation() {
+        return location;
     }
 
-    public void setTitre(String titre) {
-        this.titre = titre;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
-    public int getNombreDePersonnes() {
-        return nombreDePersonnes;
+    public String getTitle() {
+        return title;
     }
 
-    public void setNombreDePersonnes(int nombreDePersonnes) {
-        this.nombreDePersonnes = nombreDePersonnes;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getHote() {
-        return hote;
+    public int getMaxGuests() {
+        return maxGuests;
     }
 
-    public void setHote(String hote) {
-        this.hote = hote;
+    public void setMaxGuests(int maxGuests) {
+        this.maxGuests = maxGuests;
+    }
+
+    public Host getHost() {
+        return host;
+    }
+
+    public void setHost(Host host) {
+        this.host = host;
     }
 }
