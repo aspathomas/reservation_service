@@ -33,10 +33,12 @@ public class LoginPage {
         travelerRadioButton.setToggleGroup(userTypeToggleGroup);
         hostRadioButton.setToggleGroup(userTypeToggleGroup);
         travelerRadioButton.setSelected(true);
-
         // Bouton de connexion
         Button loginButton = new Button("Se connecter");
         // Ajoutez un gestionnaire d'événements pour le bouton de connexion si nécessaire
+        loginButton.setOnAction(event -> {
+            
+        });
 
         // Layout
         VBox formLayout = new VBox(usernameLabel, usernameField, passwordLabel, passwordField);
