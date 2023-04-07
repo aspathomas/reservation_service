@@ -88,12 +88,7 @@ public class HomePage {
 
 
     private ObservableList<Sejour> genererExempleSejours() {
-        List<Sejour> sejours = new ArrayList<>();
-
-        sejours.add(DbClass.sejour1);
-        sejours.add(DbClass.sejour2);
-        sejours.add(DbClass.sejour3);
-        sejours.add(DbClass.sejour4);
+        List<Sejour> sejours = DbClass.getSejours();
 
         return FXCollections.observableArrayList(sejours);
     }

@@ -1,6 +1,11 @@
 package com.example.reservation_service;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DbClass {
 
@@ -19,6 +24,9 @@ public class DbClass {
     public static final Sejour sejour2 =  new Sejour(2, LocalDate.of(2023, 6, 10), LocalDate.of(2023, 6, 17), 700.0, "Londres", "Maison de ville moderne", 4, host2);
     public static final Sejour sejour3 = new Sejour(3, LocalDate.of(2023, 7, 20), LocalDate.of(2023, 7, 27), 1200.0, "New York", "Loft avec vue sur Central Park", 2, host3);
     public static final Sejour sejour4 = new Sejour(4, LocalDate.of(2023, 8, 15), LocalDate.of(2023, 8, 22), 800.0, "Sydney", "Maison près de la plage", 6, host4);
+    public static final Sejour sejour5 =  new Sejour(1,LocalDate.of(2023, 5, 7), LocalDate.of(2023, 5, 14), 500.0, "Paris", "Appartement romantique", 2, host1);
+    public static final Sejour sejour6 =  new Sejour(1,LocalDate.of(2023, 5, 14), LocalDate.of(2023, 5, 21), 500.0, "Paris", "Appartement romantique", 2, host1);
+    public static final Sejour sejour7 =  new Sejour(1,LocalDate.of(2023, 5, 21), LocalDate.of(2023, 5, 28), 500.0, "Paris", "Appartement romantique", 2, host1);
 
     // Les utilisateurs
     public static final Traveler traveler1 = new Traveler(1, "Youri", "Novikov", "youri@email.com", "1234");
@@ -27,5 +35,18 @@ public class DbClass {
     public static final Traveler traveler4 = new Traveler(4, "Sarah", "Lee", "sarahlee@email.com", "ilovecake");
     public static final Traveler traveler5 = new Traveler(5, "Alex", "Wong", "alex.wong@email.com", "securepassword");
 
+    public static final List<Sejour> getSejours() {
+        List<Sejour> sejours = new ArrayList<>();
+
+        sejours.add(sejour1);
+        sejours.add(sejour2);
+        sejours.add(sejour3);
+        sejours.add(sejour4);
+        sejours.add(sejour5);
+        sejours.add(sejour6);
+        sejours.add(sejour7);
+
+        return sejours;
+    }
 
 }
