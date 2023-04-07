@@ -77,6 +77,12 @@ public class HomePage {
         root.setTop(topContainer);
         root.setCenter(staysTable);
 
+        searchBar.setOnKeyReleased(event -> {
+            String query = searchBar.getText().toLowerCase();
+            List<Sejour> matchingSejours = searchSejourByTitle(exempleSejours, query);
+            staysTable.setItems(FXCollections.observableArrayList(matchingSejours));
+        });
+
         return new Scene(root, 800, 600);
     }
 
@@ -92,14 +98,13 @@ public class HomePage {
         return FXCollections.observableArrayList(sejours);
     }
 
-    private ObservableList<Sejour> searchSejourByTitle(String title) {
-        ObservableList<Sejour> sejours = genererExempleSejours();
+    public List<Sejour> searchSejourByTitle(List<Sejour> sejours, String titleQuery) {
         List<Sejour> matchingSejours = new ArrayList<>();
         for (Sejour sejour : sejours) {
-            if (sejour.getTitle().contains(title)) {
+            if (sejour.getTitle().toLowerCase().contains(titleQuery)) {
                 matchingSejours.add(sejour);
             }
         }
-        return FXCollections.observableArrayList(matchingSejours);
+        return matchingSejours;
     }
 }
