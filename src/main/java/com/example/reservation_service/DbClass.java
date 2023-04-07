@@ -49,4 +49,26 @@ public class DbClass {
         return sejours;
     }
 
+    public static final List<Traveler> getTravelers() {
+        List<Traveler> travelers = new ArrayList<>();
+
+        travelers.add(traveler1);
+        travelers.add(traveler2);
+        travelers.add(traveler3);
+        travelers.add(traveler4);
+        travelers.add(traveler5);
+
+        return travelers;
+    }
+
+    public static final List<Host> getHosts() {
+        List<Host> hosts = new ArrayList<>();
+
+        hosts.add(host1);
+        hosts.add(host2);
+        hosts.add(host3);
+        hosts.add(host4);
+
+        return hosts;
+    }
 }

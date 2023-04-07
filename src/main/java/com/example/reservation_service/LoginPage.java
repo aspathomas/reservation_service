@@ -6,6 +6,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LoginPage {
     private MainApp mainApp;
     private Scene scene;
@@ -37,7 +40,11 @@ public class LoginPage {
         Button loginButton = new Button("Se connecter");
         // Ajoutez un gestionnaire d'événements pour le bouton de connexion si nécessaire
         loginButton.setOnAction(event -> {
-            
+            try{
+                connectTraveler(usernameField.toString(), passwordField.toString());
+            } catch(Exception e ){
+                System.out.println(e.getMessage());
+            }
         });
 
         // Layout
@@ -55,5 +62,25 @@ public class LoginPage {
         rootLayout.setAlignment(Pos.CENTER);
 
         return new Scene(rootLayout, 300, 200);
+    }
+
+    public Traveler connectTraveler(String usernameField, String passwordField) throws Exception {
+        List<Traveler> travelers = DbClass.getTravelers();
+        for (Traveler traveler : travelers) {
+            if (traveler.getFirstName() == usernameField && traveler.getPassword() == passwordField) {
+                return traveler;
+            }
+        }
+        throw new Exception("Voyageur pas trouvé");
+    }
+
+    public Host connectHost(String usernameField, String passwordField) throws Exception {
+        List<Host> hosts = DbClass.getHosts();
+        for (Host host : hosts) {
+            if (host.getFirstName() == usernameField && host.getPassword() == passwordField) {
+                return host;
+            }
+        }
+        throw new Exception("Hôte pas trouvé");
     }
 }
