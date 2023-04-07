@@ -84,17 +84,22 @@ public class HomePage {
     private ObservableList<Sejour> genererExempleSejours() {
         List<Sejour> sejours = new ArrayList<>();
 
-        Host host1 = new Host(1,"Jean", "Dupont", "jean.dupont@example.com", "password123");
-        Host host2 = new Host(2,"John", "Smith","john.smith@example.com", "password123");
-        Host host3 = new Host(3,"Jane", "Doe", "jane.doe@example.com", "password123");
-        Host host4 = new Host(4,"Steve", "Johnson", "steve.johnson@example.com", "password123");
-
-        sejours.add(new Sejour(1, LocalDate.of(2023, 5, 1), LocalDate.of(2023, 5, 7), 500.0, "Paris", "Appartement romantique", 2, host1));
-        sejours.add(new Sejour(2, LocalDate.of(2023, 6, 10), LocalDate.of(2023, 6, 17), 700.0, "Londres", "Maison de ville moderne", 4, host2));
-        sejours.add(new Sejour(3, LocalDate.of(2023, 7, 20), LocalDate.of(2023, 7, 27), 1200.0, "New York", "Loft avec vue sur Central Park", 2, host3));
-        sejours.add(new Sejour(4, LocalDate.of(2023, 8, 15), LocalDate.of(2023, 8, 22), 800.0, "Sydney", "Maison près de la plage", 6, host4));
+        sejours.add(DbClass.sejour1);
+        sejours.add(DbClass.sejour2);
+        sejours.add(DbClass.sejour3);
+        sejours.add(DbClass.sejour4);
 
         return FXCollections.observableArrayList(sejours);
     }
 
+    private ObservableList<Sejour> searchSejourByTitle(String title) {
+        ObservableList<Sejour> sejours = genererExempleSejours();
+        List<Sejour> matchingSejours = new ArrayList<>();
+        for (Sejour sejour : sejours) {
+            if (sejour.getTitle().contains(title)) {
+                matchingSejours.add(sejour);
+            }
+        }
+        return FXCollections.observableArrayList(matchingSejours);
+    }
 }
