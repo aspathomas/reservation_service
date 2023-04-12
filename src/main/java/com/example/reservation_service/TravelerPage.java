@@ -1,21 +1,42 @@
 package com.example.reservation_service;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
-public class TravelerPage extends Application {
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-    public static void main(String[] args) {
-        launch(args);
+public class TravelerPage {
+
+    private MainApp mainApp;
+    private Traveler traveler;
+    private Scene scene;
+
+    private int typePage = 0;
+
+    public TravelerPage(MainApp mainApp, Traveler traveler) {
+        this.mainApp = mainApp;
+        this.traveler = traveler;
+        this.scene = createScene();
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Page du voyageur");
+    public Scene getScene() {
+        return scene;
+    }
+
+    private Scene createScene() {
+        // Barre de recherche
+        //scene.setTitle("Page du voyageur");
 
         // Barre de recherche
         TextField searchField = new TextField();
@@ -23,6 +44,60 @@ public class TravelerPage extends Application {
 
         // Liste des séjours
         TableView<Sejour> staysTable = new TableView<>();
+        staysTable.setItems(sejoursLibres());
+
+        TableColumn<Sejour, LocalDate> dateDebutColumn = new TableColumn<>("Date de début");
+        dateDebutColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+
+        TableColumn<Sejour, LocalDate> dateFinColumn = new TableColumn<>("Date de fin");
+        dateFinColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
+
+        TableColumn<Sejour, Double> prixColumn = new TableColumn<>("Prix");
+        prixColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        TableColumn<Sejour, String> lieuColumn = new TableColumn<>("Lieu");
+        lieuColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
+
+        TableColumn<Sejour, String> titreColumn = new TableColumn<>("Titre");
+        titreColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+
+        TableColumn<Sejour, Integer> nombreDePersonnesColumn = new TableColumn<>("Nombre de personnes");
+        nombreDePersonnesColumn.setCellValueFactory(new PropertyValueFactory<>("maxGuests"));
+
+        TableColumn<Sejour, Void> reserveColumn = new TableColumn<>("Réserver");
+
+        Callback<TableColumn<Sejour, Void>, TableCell<Sejour, Void>> cellFactory = new Callback<>() {
+            @Override
+            public TableCell<Sejour, Void> call(TableColumn<Sejour, Void> param) {
+                final TableCell<Sejour, Void> cell = new TableCell<>() {
+                    private final Button reserveButton = new Button("Réserver");
+
+                    {
+                        reserveButton.setOnAction(event -> {
+                            Sejour sejour = getTableView().getItems().get(getIndex());
+                            reservedSejour(sejour);
+                            staysTable.setItems(sejoursLibres());
+                            // Perform reservation action here
+                        });
+                    }
+
+                    @Override
+                    protected void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(reserveButton);
+                        }
+                    }
+                };
+
+                return cell;
+            }
+        };
+        reserveColumn.setCellFactory(cellFactory);
+        staysTable.getColumns().addAll(dateDebutColumn, dateFinColumn, prixColumn, lieuColumn, titreColumn, nombreDePersonnesColumn, reserveColumn);
+
         // Configurez la table des séjours avec des colonnes, des données, etc.
 
         // Panier
@@ -31,6 +106,19 @@ public class TravelerPage extends Application {
 
         // Réservations
         Button viewReservationsButton = new Button("Voir mes réservations");
+        viewReservationsButton.setOnAction(event -> {
+            if (this.typePage == 0) {
+                staysTable.setItems(sejoursBooked());
+                reserveColumn.setVisible(false);
+                viewReservationsButton.setText("Voir les séjours libres");
+                this.typePage=1;
+            } else if (this.typePage == 1) {
+                staysTable.setItems(sejoursLibres());
+                reserveColumn.setVisible(true);
+                viewReservationsButton.setText("Voir mes réservations");
+                this.typePage=0;
+            }
+        });
         // Ajoutez un gestionnaire d'événements pour le bouton "Voir mes réservations"
 
         // Layout
@@ -46,7 +134,53 @@ public class TravelerPage extends Application {
         rootLayout.setSpacing(10);
 
         Scene scene = new Scene(rootLayout, 800, 600);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        return scene;
     }
+
+    private ObservableList<Sejour> sejoursLibres() {
+        List<Sejour> sejours = DbClass.getSejours();
+        List<Booking> bookings = DbClass.bookings;
+        List<Sejour> sejoursLibres = new ArrayList<>();
+
+        for (Sejour sejour: sejours) {
+            boolean isReserved = false;
+
+            listerBooking: {
+                for (Booking booking: bookings) {
+                    if (booking.getSejour().equals(sejour)) {
+                        if (booking.isConfirmed()) {
+                            isReserved = true;
+                        }
+                        break listerBooking;
+                    }
+                }
+            }
+
+            if (!isReserved) {
+                sejoursLibres.add(sejour);
+            }
+
+        }
+        return FXCollections.observableArrayList(sejoursLibres);
+    }
+
+    private void reservedSejour(Sejour sejour){
+        Booking booking = new Booking(this.traveler, sejour, LocalDate.now(), true);
+        DbClass.addBooking(booking);
+    }
+
+    private ObservableList<Sejour> sejoursBooked(){
+        List<Booking> bookings = DbClass.bookings;
+        List<Sejour> sejoursBooked = new ArrayList<>();
+
+        for (Booking booking: bookings) {
+            if (booking.getTraveler().equals(this.traveler)) {
+                sejoursBooked.add(booking.getSejour());
+            }
+        }
+        return FXCollections.observableArrayList(sejoursBooked);
+    }
+
+
+
 }

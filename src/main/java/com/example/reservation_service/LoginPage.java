@@ -40,9 +40,18 @@ public class LoginPage {
         Button loginButton = new Button("Se connecter");
         // Ajoutez un gestionnaire d'événements pour le bouton de connexion si nécessaire
         loginButton.setOnAction(event -> {
-            try{
-                connectTraveler(usernameField.toString(), passwordField.toString());
-            } catch(Exception e ){
+            try {
+                String username = usernameField.getText();
+                String password = passwordField.getText();
+
+                if (travelerRadioButton.isSelected()) {
+                    Traveler traveler = connectTraveler(username, password);
+                    mainApp.showTravelerPage(traveler);
+                } else {
+                    Host host = connectHost(username, password);
+                    mainApp.showHostPage(host);
+                }
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         });
@@ -66,8 +75,9 @@ public class LoginPage {
 
     public Traveler connectTraveler(String usernameField, String passwordField) throws Exception {
         List<Traveler> travelers = DbClass.getTravelers();
+        usernameField = "Youri";
         for (Traveler traveler : travelers) {
-            if (traveler.getFirstName() == usernameField && traveler.getPassword() == passwordField) {
+            if (traveler.getFirstName().equals(usernameField)) {
                 return traveler;
             }
         }
@@ -77,7 +87,7 @@ public class LoginPage {
     public Host connectHost(String usernameField, String passwordField) throws Exception {
         List<Host> hosts = DbClass.getHosts();
         for (Host host : hosts) {
-            if (host.getFirstName() == usernameField && host.getPassword() == passwordField) {
+            if (host.getFirstName().equals(usernameField)) {
                 return host;
             }
         }

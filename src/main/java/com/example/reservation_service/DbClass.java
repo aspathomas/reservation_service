@@ -13,6 +13,8 @@ public class DbClass {
     public static final String VALUE1 = "foo";
     public static final String VALUE2 = "bar";
 
+    public static List<Booking> bookings = new ArrayList<>();
+
     // Les hôtes
     public static final Host host1 = new Host(1,"Jean", "Dupont", "jean.dupont@example.com", "password123");
     public static final Host host2 = new Host(2,"John", "Smith","john.smith@example.com", "password123");
@@ -70,5 +72,10 @@ public class DbClass {
         hosts.add(host4);
 
         return hosts;
+    }
+
+    public static final void addBooking(Booking booking) {
+
+        bookings.add(booking);
     }
 }

@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
 
     private Stage primaryStage;
+    private Booking booking;
 
     public static void main(String[] args) {
         launch(args);
@@ -30,15 +31,15 @@ public class MainApp extends Application {
         primaryStage.show();
     }
 
-    public void showTravelerPage() {
-        //TravelerPage travelerPage = new TravelerPage(this);
-        //primaryStage.setScene(travelerPage.getScene());
-        //primaryStage.show();
+    public void showTravelerPage(Traveler traveler) {
+        TravelerPage travelerPage = new TravelerPage(this, traveler);
+        primaryStage.setScene(travelerPage.getScene());
+        primaryStage.show();
     }
 
-    public void showHostPage() {
-        //HostPage hostPage = new HostPage(this);
-        //primaryStage.setScene(hostPage.getScene());
-        //primaryStage.show();
+    public void showHostPage(Host host) {
+        HostPage hostPage = new HostPage(this, host);
+        primaryStage.setScene(hostPage.getScene());
+        primaryStage.show();
     }
 }

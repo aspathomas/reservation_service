@@ -14,16 +14,23 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HostPage extends Application {
+public class HostPage {
 
-    public static void main(String[] args) {
-        launch(args);
+    private MainApp mainApp;
+    private Host host;
+    private Scene scene;
+
+    public HostPage(MainApp mainApp, Host host) {
+        this.mainApp = mainApp;
+        this.host = host;
+        this.scene = createScene();
     }
-    @Override
-    public void start(Stage primaryStage) {
-        Host hote = DbClass.host1;
-        primaryStage.setTitle("Page de l'hôte");
 
+    public Scene getScene() {
+        return scene;
+    }
+
+    private Scene createScene() {
         // Liste des séjours proposés
         TableView<Sejour> offeredStaysTable = new TableView<>();
         // Configurez la table des séjours proposés avec des colonnes, des données, etc.
@@ -47,8 +54,8 @@ public class HostPage extends Application {
         VBox rootLayout = new VBox(topBar, bottomBar);
         rootLayout.setPadding(new Insets(10));
         rootLayout.setSpacing(10);
-        
-        ObservableList<Sejour> exempleSejours = FXCollections.observableArrayList(searchSejourByTitle(hote));
+
+        ObservableList<Sejour> exempleSejours = FXCollections.observableArrayList(searchSejourByHost(this.host));
         offeredStaysTable.setItems(exempleSejours);
 
         TableColumn<Sejour, LocalDate> dateDebutColumn = new TableColumn<>("Date de début");
@@ -76,10 +83,10 @@ public class HostPage extends Application {
         offeredStaysTable.getColumns().addAll(dateDebutColumn, dateFinColumn, prixColumn, lieuColumn, titreColumn, nombreDePersonnesColumn);
 
         Scene scene = new Scene(rootLayout, 800, 600);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        return scene;
     }
-    public List<Sejour> searchSejourByTitle(Host hote) {
+
+    public List<Sejour> searchSejourByHost(Host hote) {
         List<Sejour> sejours = DbClass.getSejours();
         List<Sejour> matchingSejours = new ArrayList<>();
         for (Sejour sejour : sejours) {
