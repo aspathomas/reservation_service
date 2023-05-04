@@ -75,7 +75,7 @@ public class LoginPage {
 
     public Traveler connectTraveler(String usernameField, String passwordField) throws Exception {
         List<Traveler> travelers = DbClass.getTravelers();
-        usernameField = "Youri";
+        System.out.println(usernameField);
         for (Traveler traveler : travelers) {
             if (traveler.getFirstName().equals(usernameField)) {
                 return traveler;

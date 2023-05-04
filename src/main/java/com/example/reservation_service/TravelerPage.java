@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -35,12 +36,15 @@ public class TravelerPage {
     }
 
     private Scene createScene() {
-        // Barre de recherche
-        //scene.setTitle("Page du voyageur");
-
+        //Deconnection
+        Button DeconnecterButton = new Button("Déconnecter");
+        DeconnecterButton.setOnAction(event -> mainApp.showHomePage());
+        //Nom utilisateur
+        Text NomPrenom = new Text(10, 50, traveler.getFirstName() + ' ' + traveler.getLastName());
         // Barre de recherche
         TextField searchField = new TextField();
         searchField.setPromptText("Rechercher un séjour...");
+
 
         // Liste des séjours
         TableView<Sejour> staysTable = new TableView<>();
@@ -122,7 +126,7 @@ public class TravelerPage {
         // Ajoutez un gestionnaire d'événements pour le bouton "Voir mes réservations"
 
         // Layout
-        VBox topBar = new VBox(searchField);
+        VBox topBar = new VBox(NomPrenom, DeconnecterButton, searchField);
         topBar.setPadding(new Insets(10));
         topBar.setSpacing(10);
 
