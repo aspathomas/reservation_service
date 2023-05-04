@@ -174,7 +174,7 @@ public class TravelerPage {
             List<Sejour> matchingSejours = searchSejourByTitle(sejoursLibres(), query);
             staysTable.setItems(FXCollections.observableArrayList(matchingSejours));
         });
-
+        BookedColumn.setVisible(false);
         Scene scene = new Scene(rootLayout, 800, 600);
         return scene;
     }
