@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class DbClass {
@@ -77,5 +78,15 @@ public class DbClass {
     public static final void addBooking(Booking booking) {
 
         bookings.add(booking);
+    }
+
+    public static final void removeBooking(Sejour sejour) {
+        Iterator<Booking> iterator = bookings.iterator(); // create an iterator for the bookings list
+        while (iterator.hasNext()) { // iterate over the bookings
+            Booking booking = iterator.next();
+            if (booking.getSejour().equals(sejour)) { // check if the booking matches the sejour
+                iterator.remove(); // remove the booking using the iterator
+            }
+        }
     }
 }

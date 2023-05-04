@@ -75,7 +75,6 @@ public class TravelerPage {
             public TableCell<Sejour, Void> call(TableColumn<Sejour, Void> param) {
                 final TableCell<Sejour, Void> cell = new TableCell<>() {
                     private final Button reserveButton = new Button("Réserver");
-
                     {
                         reserveButton.setOnAction(event -> {
                             Sejour sejour = getTableView().getItems().get(getIndex());
@@ -99,13 +98,44 @@ public class TravelerPage {
                 return cell;
             }
         };
+
         reserveColumn.setCellFactory(cellFactory);
-        staysTable.getColumns().addAll(dateDebutColumn, dateFinColumn, prixColumn, lieuColumn, titreColumn, nombreDePersonnesColumn, reserveColumn);
+
+        TableColumn<Sejour, Void> BookedColumn = new TableColumn<>("Annuler");
+
+        Callback<TableColumn<Sejour, Void>, TableCell<Sejour, Void>> cellFactory2 = new Callback<>() {
+            @Override
+            public TableCell<Sejour, Void> call(TableColumn<Sejour, Void> param) {
+                final TableCell<Sejour, Void> cell = new TableCell<>() {
+                    private final Button cancelButton = new Button("Annuler");
+                    {
+                        cancelButton.setOnAction(event -> {
+                            Sejour sejour = getTableView().getItems().get(getIndex());
+                            cancelSejour(sejour);
+                            staysTable.setItems(sejoursBooked());
+                            // Perform reservation action here
+                        });
+                    }
+
+                    @Override
+                    protected void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(cancelButton);
+                        }
+                    }
+                };
+
+                return cell;
+            }
+        };
+        BookedColumn.setCellFactory(cellFactory2);
+
+        staysTable.getColumns().addAll(dateDebutColumn, dateFinColumn, prixColumn, lieuColumn, titreColumn, nombreDePersonnesColumn, reserveColumn, BookedColumn);
 
         // Configurez la table des séjours avec des colonnes, des données, etc.
-
-        // Panier
-        Button viewCartButton = new Button("Voir le panier");
         // Ajoutez un gestionnaire d'événements pour le bouton "Voir le panier"
 
         // Réservations
@@ -114,11 +144,13 @@ public class TravelerPage {
             if (this.typePage == 0) {
                 staysTable.setItems(sejoursBooked());
                 reserveColumn.setVisible(false);
+                BookedColumn.setVisible(true);
                 viewReservationsButton.setText("Voir les séjours libres");
                 this.typePage=1;
             } else if (this.typePage == 1) {
                 staysTable.setItems(sejoursLibres());
                 reserveColumn.setVisible(true);
+                BookedColumn.setVisible(false);
                 viewReservationsButton.setText("Voir mes réservations");
                 this.typePage=0;
             }
@@ -130,12 +162,18 @@ public class TravelerPage {
         topBar.setPadding(new Insets(10));
         topBar.setSpacing(10);
 
-        HBox bottomBar = new HBox(viewCartButton, viewReservationsButton);
+        HBox bottomBar = new HBox(viewReservationsButton);
         bottomBar.setSpacing(10);
 
         VBox rootLayout = new VBox(topBar, staysTable, bottomBar);
         rootLayout.setPadding(new Insets(10));
         rootLayout.setSpacing(10);
+
+        searchField.setOnKeyReleased(event -> {
+            String query = searchField.getText().toLowerCase();
+            List<Sejour> matchingSejours = searchSejourByTitle(sejoursLibres(), query);
+            staysTable.setItems(FXCollections.observableArrayList(matchingSejours));
+        });
 
         Scene scene = new Scene(rootLayout, 800, 600);
         return scene;
@@ -173,6 +211,10 @@ public class TravelerPage {
         DbClass.addBooking(booking);
     }
 
+    private void cancelSejour(Sejour sejour){
+        DbClass.removeBooking(sejour);
+    }
+
     private ObservableList<Sejour> sejoursBooked(){
         List<Booking> bookings = DbClass.bookings;
         List<Sejour> sejoursBooked = new ArrayList<>();
@@ -185,6 +227,13 @@ public class TravelerPage {
         return FXCollections.observableArrayList(sejoursBooked);
     }
 
-
-
+    public List<Sejour> searchSejourByTitle(List<Sejour> sejours, String titleQuery) {
+        List<Sejour> matchingSejours = new ArrayList<>();
+        for (Sejour sejour : sejours) {
+            if (sejour.getTitle().toLowerCase().contains(titleQuery)) {
+                matchingSejours.add(sejour);
+            }
+        }
+        return matchingSejours;
+    }
 }
