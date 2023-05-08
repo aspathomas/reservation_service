@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -34,149 +35,108 @@ public class TravelerPage {
     public Scene getScene() {
         return scene;
     }
+    private ObservableList<Sejour> allSejours = sejoursLibres();
 
+    private GridPane staysGrid;
     private Scene createScene() {
-        //Deconnection
+        // Deconnection
         Button DeconnecterButton = new Button("Déconnecter");
+        DeconnecterButton.getStyleClass().add("logout-button");
         DeconnecterButton.setOnAction(event -> mainApp.showHomePage());
-        //Nom utilisateur
+
+
+        // User name
         Text NomPrenom = new Text(10, 50, traveler.getFirstName() + ' ' + traveler.getLastName());
-        // Barre de recherche
+        NomPrenom.getStyleClass().add("user-name");
+
+        // Search bar
         TextField searchField = new TextField();
         searchField.setPromptText("Rechercher un séjour...");
+        searchField.getStyleClass().add("search-field");
 
 
         // Liste des séjours
-        TableView<Sejour> staysTable = new TableView<>();
-        staysTable.setItems(sejoursLibres());
+        //allSejours = FXCollections.observableArrayList(DbClass.getSejours());
 
-        TableColumn<Sejour, LocalDate> dateDebutColumn = new TableColumn<>("Date de début");
-        dateDebutColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
 
-        TableColumn<Sejour, LocalDate> dateFinColumn = new TableColumn<>("Date de fin");
-        dateFinColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
-
-        TableColumn<Sejour, Double> prixColumn = new TableColumn<>("Prix");
-        prixColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-
-        TableColumn<Sejour, String> lieuColumn = new TableColumn<>("Lieu");
-        lieuColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
-
-        TableColumn<Sejour, String> titreColumn = new TableColumn<>("Titre");
-        titreColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-
-        TableColumn<Sejour, Integer> nombreDePersonnesColumn = new TableColumn<>("Nombre de personnes");
-        nombreDePersonnesColumn.setCellValueFactory(new PropertyValueFactory<>("maxGuests"));
-
-        TableColumn<Sejour, Void> reserveColumn = new TableColumn<>("Réserver");
-
-        Callback<TableColumn<Sejour, Void>, TableCell<Sejour, Void>> cellFactory = new Callback<>() {
-            @Override
-            public TableCell<Sejour, Void> call(TableColumn<Sejour, Void> param) {
-                final TableCell<Sejour, Void> cell = new TableCell<>() {
-                    private final Button reserveButton = new Button("Réserver");
-                    {
-                        reserveButton.setOnAction(event -> {
-                            Sejour sejour = getTableView().getItems().get(getIndex());
-                            reservedSejour(sejour);
-                            staysTable.setItems(sejoursLibres());
-                            // Perform reservation action here
-                        });
-                    }
-
-                    @Override
-                    protected void updateItem(Void item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            setGraphic(reserveButton);
-                        }
-                    }
-                };
-
-                return cell;
-            }
-        };
-
-        reserveColumn.setCellFactory(cellFactory);
-
-        TableColumn<Sejour, Void> BookedColumn = new TableColumn<>("Annuler");
-
-        Callback<TableColumn<Sejour, Void>, TableCell<Sejour, Void>> cellFactory2 = new Callback<>() {
-            @Override
-            public TableCell<Sejour, Void> call(TableColumn<Sejour, Void> param) {
-                final TableCell<Sejour, Void> cell = new TableCell<>() {
-                    private final Button cancelButton = new Button("Annuler");
-                    {
-                        cancelButton.setOnAction(event -> {
-                            Sejour sejour = getTableView().getItems().get(getIndex());
-                            cancelSejour(sejour);
-                            staysTable.setItems(sejoursBooked());
-                            // Perform reservation action here
-                        });
-                    }
-
-                    @Override
-                    protected void updateItem(Void item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            setGraphic(cancelButton);
-                        }
-                    }
-                };
-
-                return cell;
-            }
-        };
-        BookedColumn.setCellFactory(cellFactory2);
-
-        staysTable.getColumns().addAll(dateDebutColumn, dateFinColumn, prixColumn, lieuColumn, titreColumn, nombreDePersonnesColumn, reserveColumn, BookedColumn);
-
+        staysGrid = new GridPane();
+        staysGrid.getStyleClass().add("stays-grid"); // Add a CSS class to the grid
+        updateStaysGrid(sejoursLibres(), 0);
         // Configurez la table des séjours avec des colonnes, des données, etc.
         // Ajoutez un gestionnaire d'événements pour le bouton "Voir le panier"
 
-        // Réservations
         Button viewReservationsButton = new Button("Voir mes réservations");
         viewReservationsButton.setOnAction(event -> {
             if (this.typePage == 0) {
-                staysTable.setItems(sejoursBooked());
-                reserveColumn.setVisible(false);
-                BookedColumn.setVisible(true);
+                updateStaysGrid(sejoursBooked(), 1);
                 viewReservationsButton.setText("Voir les séjours libres");
                 this.typePage=1;
             } else if (this.typePage == 1) {
-                staysTable.setItems(sejoursLibres());
-                reserveColumn.setVisible(true);
-                BookedColumn.setVisible(false);
+                updateStaysGrid(sejoursLibres(), 0);
                 viewReservationsButton.setText("Voir mes réservations");
                 this.typePage=0;
             }
         });
+
+
+
         // Ajoutez un gestionnaire d'événements pour le bouton "Voir mes réservations"
 
         // Layout
-        VBox topBar = new VBox(NomPrenom, DeconnecterButton, searchField);
+        HBox userNameAndLogout = new HBox(NomPrenom, DeconnecterButton);
+        userNameAndLogout.setSpacing(15);
+        userNameAndLogout.setAlignment(Pos.CENTER);
+
+        HBox searchAndViewReservations = new HBox(searchField, viewReservationsButton);
+        searchAndViewReservations.setSpacing(10);
+        searchAndViewReservations.setAlignment(Pos.CENTER);
+
+        VBox topBar = new VBox(userNameAndLogout, searchAndViewReservations);
         topBar.setPadding(new Insets(10));
         topBar.setSpacing(10);
+        topBar.setAlignment(Pos.CENTER);
+        topBar.getStyleClass().add("top-bar");
 
-        HBox bottomBar = new HBox(viewReservationsButton);
-        bottomBar.setSpacing(10);
-
-        VBox rootLayout = new VBox(topBar, staysTable, bottomBar);
+        VBox rootLayout = new VBox(topBar, staysGrid);
         rootLayout.setPadding(new Insets(10));
         rootLayout.setSpacing(10);
+        rootLayout.getStyleClass().add("root-layout");
+
 
         searchField.setOnKeyReleased(event -> {
             String query = searchField.getText().toLowerCase();
             List<Sejour> matchingSejours = searchSejourByTitle(sejoursLibres(), query);
-            staysTable.setItems(FXCollections.observableArrayList(matchingSejours));
+            updateStaysGrid(FXCollections.observableArrayList(matchingSejours), 0);
         });
-        BookedColumn.setVisible(false);
+
         Scene scene = new Scene(rootLayout, 800, 600);
+        scene.getStylesheets().add(getClass().getResource("/com/example/reservation_service/traveler.css").toExternalForm());
         return scene;
+    }
+
+    private ObservableList<Sejour> genererExempleSejours() {
+        List<Sejour> sejoursLibres = new ArrayList<>();
+        List<Booking> bookings = DbClass.bookings;
+
+        for (Sejour sejour : allSejours) {
+            boolean isReserved = false;
+
+            listerBooking: {
+                for (Booking booking : bookings) {
+                    if (booking.getSejour().equals(sejour)) {
+                        if (booking.isConfirmed()) {
+                            isReserved = true;
+                        }
+                        break listerBooking;
+                    }
+                }
+            }
+
+            if (!isReserved) {
+                sejoursLibres.add(sejour);
+            }
+        }
+        return FXCollections.observableArrayList(sejoursLibres);
     }
 
     private ObservableList<Sejour> sejoursLibres() {
@@ -227,6 +187,7 @@ public class TravelerPage {
         return FXCollections.observableArrayList(sejoursBooked);
     }
 
+
     public List<Sejour> searchSejourByTitle(List<Sejour> sejours, String titleQuery) {
         List<Sejour> matchingSejours = new ArrayList<>();
         for (Sejour sejour : sejours) {
@@ -236,4 +197,53 @@ public class TravelerPage {
         }
         return matchingSejours;
     }
+
+    private VBox createStayBox(Sejour stay, ObservableList<Sejour> staysList, int typePage) {
+        VBox stayBox = new VBox(10);
+        stayBox.getStyleClass().add("stay-box");
+
+        Label titleLabel = new Label(stay.getTitle());
+        titleLabel.getStyleClass().add("stay-title");
+
+        Label locationLabel = new Label(stay.getLocation());
+        locationLabel.getStyleClass().add("stay-location");
+
+        Label priceLabel = new Label("Prix: " + stay.getPrice());
+        priceLabel.getStyleClass().add("stay-price");
+
+        Button reserveButton = new Button(typePage == 0 ? "Réserver" : "Annuler");
+        reserveButton.getStyleClass().add("stay-reserve-button");
+        reserveButton.setOnAction(event -> {
+            if (typePage == 0) {
+                reservedSejour(stay);
+                updateStaysGrid(sejoursLibres(), 0);
+            } else {
+                cancelSejour(stay);
+                updateStaysGrid(sejoursBooked(), 0);
+            }
+        });
+
+        stayBox.getChildren().addAll(titleLabel, locationLabel, priceLabel, reserveButton);
+
+        return stayBox;
+    }
+
+
+
+    private void updateStaysGrid(List<Sejour> staysList, int typePage) {
+        staysGrid.getChildren().clear();
+        for (int i = 0; i < staysList.size(); i++) {
+            Sejour stay = staysList.get(i);
+            VBox stayBox = createStayBox(stay, FXCollections.observableArrayList(staysList), typePage);
+            staysGrid.add(stayBox, i % 3, i / 3);
+        }
+    }
+
+
+
+
+
+
+
+
 }
