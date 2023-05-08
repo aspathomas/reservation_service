@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LoginPage {
@@ -23,22 +22,24 @@ public class LoginPage {
     }
 
     private Scene createScene() {
-        // Formulaire de connexion
+        // Login form
         Label usernameLabel = new Label("Nom d'utilisateur :");
         TextField usernameField = new TextField();
         Label passwordLabel = new Label("Mot de passe :");
         PasswordField passwordField = new PasswordField();
 
-        // RadioButtons pour choisir entre voyageur et hôte
+        // RadioButtons for choosing between traveler and host
         RadioButton travelerRadioButton = new RadioButton("Voyageur");
         RadioButton hostRadioButton = new RadioButton("Hôte");
         ToggleGroup userTypeToggleGroup = new ToggleGroup();
         travelerRadioButton.setToggleGroup(userTypeToggleGroup);
         hostRadioButton.setToggleGroup(userTypeToggleGroup);
         travelerRadioButton.setSelected(true);
-        // Bouton de connexion
+
+        // Login button
         Button loginButton = new Button("Se connecter");
-        // Ajoutez un gestionnaire d'événements pour le bouton de connexion si nécessaire
+        loginButton.getStyleClass().add("login-button");
+        // Add an event handler for the login button if needed
         loginButton.setOnAction(event -> {
             try {
                 String username = usernameField.getText();
@@ -70,7 +71,9 @@ public class LoginPage {
         rootLayout.setSpacing(10);
         rootLayout.setAlignment(Pos.CENTER);
 
-        return new Scene(rootLayout, 300, 200);
+        Scene scene = new Scene(rootLayout, 300, 200);
+        scene.getStylesheets().add(getClass().getResource("/com/example/reservation_service/login.css").toExternalForm());
+        return scene;
     }
 
     public Traveler connectTraveler(String usernameField, String passwordField) throws Exception {

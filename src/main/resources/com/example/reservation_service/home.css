@@ -1,0 +1,38 @@
+.search-bar {
+    -fx-padding: 5;
+    -fx-border-radius: 5;
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: black; /* Add a black border color */
+    -fx-border-width: 1; /* Set the border width to 1 */
+}
+
+
+.login-button {
+    -fx-background-color: #4a86e8;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5;
+}
+
+.login-button:hover {
+    -fx-background-color: #4072b8;
+}
+
+.stays-table {
+    -fx-table-cell-border-color: transparent;
+    -fx-border-color: #c0c0c0;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-padding: 5;
+}
+
+
+.login-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.login-button:hover {
+    -fx-background-color: #45A049;
+}

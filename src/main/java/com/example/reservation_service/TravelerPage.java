@@ -97,7 +97,10 @@ public class TravelerPage {
         topBar.setAlignment(Pos.CENTER);
         topBar.getStyleClass().add("top-bar");
 
-        VBox rootLayout = new VBox(topBar, staysGrid);
+        ScrollPane staysScrollPane = new ScrollPane(staysGrid);
+        staysScrollPane.setFitToWidth(true);
+
+        VBox rootLayout = new VBox(topBar, staysScrollPane);
         rootLayout.setPadding(new Insets(10));
         rootLayout.setSpacing(10);
         rootLayout.getStyleClass().add("root-layout");
@@ -219,7 +222,7 @@ public class TravelerPage {
                 updateStaysGrid(sejoursLibres(), 0);
             } else {
                 cancelSejour(stay);
-                updateStaysGrid(sejoursBooked(), 0);
+                updateStaysGrid(sejoursBooked(), 1);
             }
         });
 
