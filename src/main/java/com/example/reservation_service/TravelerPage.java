@@ -234,6 +234,9 @@ public class TravelerPage {
         Label locationLabel = new Label(stay.getLocation());
         locationLabel.getStyleClass().add("stay-location");
 
+        Label dateLabel = new Label("De : " + stay.getStartDate() + " \nà " + stay.getEndDate());
+        dateLabel.getStyleClass().add("stay-date");
+
         Label priceLabel = new Label("Prix: " + stay.getPrice());
         priceLabel.getStyleClass().add("stay-price");
 
@@ -252,7 +255,7 @@ public class TravelerPage {
             }
         });
 
-        stayBox.getChildren().addAll(titleLabel, locationLabel, priceLabel, reserveButton);
+        stayBox.getChildren().addAll(titleLabel, locationLabel, dateLabel, priceLabel, reserveButton);
 
         return stayBox;
     }

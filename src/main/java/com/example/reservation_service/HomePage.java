@@ -36,9 +36,13 @@ public class HomePage {
         TextField searchBar = new TextField();
         searchBar.setPromptText("Recherchez un séjour");
         searchBar.getStyleClass().add("search-bar"); // Add a CSS class to the search bar
-        searchBarContainer.getChildren().addAll(searchBar);
-        searchBarContainer.setAlignment(Pos.CENTER);
 
+        ComboBox<String> searchCriteria = new ComboBox<>();
+        searchCriteria.getItems().addAll("Location", "Titre", "Date");
+        searchCriteria.setValue("Titre"); // Set the default value to "Titre"
+
+        searchBarContainer.getChildren().addAll(searchBar, searchCriteria);
+        searchBarContainer.setAlignment(Pos.CENTER);
         HBox loginButtonsContainer = new HBox(10); // Add spacing between buttons
         Button loginButton = new Button("Login Page");
         loginButton.getStyleClass().add("login-button"); // Add a CSS class to the login button
@@ -61,7 +65,15 @@ public class HomePage {
 
         searchBar.setOnKeyReleased(event -> {
             String query = searchBar.getText().toLowerCase();
-            List<Sejour> matchingSejours = searchSejourByTitle(exempleSejours, query);
+            String selectedCriteria = searchCriteria.getValue();
+            List<Sejour> matchingSejours;
+
+            if (selectedCriteria.equals("Location")) {
+                matchingSejours = searchSejourByLocation(exempleSejours, query);
+            } else {
+                matchingSejours = searchSejourByTitle(exempleSejours, query);
+            }
+
             staysList.setItems(FXCollections.observableArrayList(matchingSejours));
         });
 
@@ -83,6 +95,16 @@ public class HomePage {
         List<Sejour> matchingSejours = new ArrayList<>();
         for (Sejour sejour : sejours) {
             if (sejour.getTitle().toLowerCase().contains(titleQuery)) {
+                matchingSejours.add(sejour);
+            }
+        }
+        return matchingSejours;
+    }
+
+    public List<Sejour> searchSejourByLocation(List<Sejour> sejours, String locationQuery) {
+        List<Sejour> matchingSejours = new ArrayList<>();
+        for (Sejour sejour : sejours) {
+            if (sejour.getLocation().toLowerCase().contains(locationQuery)) {
                 matchingSejours.add(sejour);
             }
         }

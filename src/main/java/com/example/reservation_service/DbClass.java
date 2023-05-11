@@ -40,15 +40,15 @@ public class DbClass {
 
     public static final List<Sejour> getSejours() {
         List<Sejour> sejours = new ArrayList<>();
-
-        sejours.add(sejour1);
-        sejours.add(sejour2);
-        sejours.add(sejour3);
-        sejours.add(sejour4);
-        sejours.add(sejour5);
-        sejours.add(sejour6);
-        sejours.add(sejour7);
-
+        for(int i=0; i<2; i++) {
+            sejours.add(sejour1);
+            sejours.add(sejour2);
+            sejours.add(sejour3);
+            sejours.add(sejour4);
+            sejours.add(sejour5);
+            sejours.add(sejour6);
+            sejours.add(sejour7);
+        }
         return sejours;
     }
 
