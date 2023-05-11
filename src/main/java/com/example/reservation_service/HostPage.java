@@ -161,7 +161,7 @@ public class HostPage {
         List<Sejour> sejoursBooked = new ArrayList<>();
 
         for (Booking booking: bookings) {
-            if (booking.getSejour().getHost().equals(this.host)) {
+            if (booking.getSejour().getHost().equals(this.host) && booking.isConfirmed()) {
                 sejoursBooked.add(booking.getSejour());
             }
         }

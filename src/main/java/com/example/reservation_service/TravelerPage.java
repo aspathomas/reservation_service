@@ -35,8 +35,6 @@ public class TravelerPage {
     public Scene getScene() {
         return scene;
     }
-    private ObservableList<Sejour> allSejours = sejoursLibres();
-
     private GridPane staysGrid;
     private Scene createScene() {
         // Deconnection
@@ -75,8 +73,27 @@ public class TravelerPage {
                 updateStaysGrid(sejoursLibres(), 0);
                 viewReservationsButton.setText("Voir mes réservations");
                 this.typePage=0;
+            } else {
+                updateStaysGrid(sejoursBooked(), 1);
+                viewReservationsButton.setText("Voir les séjours libres");
+                this.typePage=1;
             }
         });
+
+        Button panierButton = new Button("Voir mon panier");
+        panierButton.setOnAction(event -> {
+            if (this.typePage == 2) {
+                updateStaysGrid(reservedSejour(), 0);
+                panierButton.setText("Voir mon panier");
+                viewReservationsButton.setText("Voir les séjours libres");
+                this.typePage=1;
+            } else {
+                updateStaysGrid(sejoursPanier(), 1);
+                panierButton.setText("Valider mon panier");
+                this.typePage=2;
+            }
+        });
+
 
 
 
@@ -87,7 +104,7 @@ public class TravelerPage {
         userNameAndLogout.setSpacing(15);
         userNameAndLogout.setAlignment(Pos.CENTER);
 
-        HBox searchAndViewReservations = new HBox(searchField, viewReservationsButton);
+        HBox searchAndViewReservations = new HBox(searchField, viewReservationsButton, panierButton);
         searchAndViewReservations.setSpacing(10);
         searchAndViewReservations.setAlignment(Pos.CENTER);
 
@@ -117,43 +134,17 @@ public class TravelerPage {
         return scene;
     }
 
-    private ObservableList<Sejour> genererExempleSejours() {
-        List<Sejour> sejoursLibres = new ArrayList<>();
-        List<Booking> bookings = DbClass.bookings;
-
-        for (Sejour sejour : allSejours) {
-            boolean isReserved = false;
-
-            listerBooking: {
-                for (Booking booking : bookings) {
-                    if (booking.getSejour().equals(sejour)) {
-                        if (booking.isConfirmed()) {
-                            isReserved = true;
-                        }
-                        break listerBooking;
-                    }
-                }
-            }
-
-            if (!isReserved) {
-                sejoursLibres.add(sejour);
-            }
-        }
-        return FXCollections.observableArrayList(sejoursLibres);
-    }
-
     private ObservableList<Sejour> sejoursLibres() {
         List<Sejour> sejours = DbClass.getSejours();
         List<Booking> bookings = DbClass.bookings;
         List<Sejour> sejoursLibres = new ArrayList<>();
-
         for (Sejour sejour: sejours) {
-            boolean isReserved = false;
-
-            listerBooking: {
-                for (Booking booking: bookings) {
+            boolean isReserved= false;
+            listerBooking:
+            {
+                for (Booking booking : bookings) {
                     if (booking.getSejour().equals(sejour)) {
-                        if (booking.isConfirmed()) {
+                        if (booking.isConfirmed() || booking.getTraveler().equals(this.traveler)) {
                             isReserved = true;
                         }
                         break listerBooking;
@@ -169,8 +160,23 @@ public class TravelerPage {
         return FXCollections.observableArrayList(sejoursLibres);
     }
 
-    private void reservedSejour(Sejour sejour){
-        Booking booking = new Booking(this.traveler, sejour, LocalDate.now(), true);
+    private ObservableList<Sejour> reservedSejour() {
+        List<Booking> bookings = DbClass.bookings;
+        List<Sejour> sejoursBooked = new ArrayList<>();
+
+        for (Booking booking : bookings) {
+            if (booking.getTraveler().equals(this.traveler)) {
+                if (!booking.isConfirmed()) {
+                    booking.setConfirmed(true);
+                    sejoursBooked.add(booking.getSejour());
+                }
+            }
+        }
+        return FXCollections.observableArrayList(sejoursBooked);
+    }
+
+    private void panierSejour(Sejour sejour){
+        Booking booking = new Booking(this.traveler, sejour, LocalDate.now(), false);
         DbClass.addBooking(booking);
     }
 
@@ -184,11 +190,28 @@ public class TravelerPage {
 
         for (Booking booking: bookings) {
             if (booking.getTraveler().equals(this.traveler)) {
-                sejoursBooked.add(booking.getSejour());
+                if (booking.isConfirmed()) {
+                    sejoursBooked.add(booking.getSejour());
+                }
             }
         }
         return FXCollections.observableArrayList(sejoursBooked);
     }
+
+    private ObservableList<Sejour> sejoursPanier(){
+        List<Booking> bookings = DbClass.bookings;
+        List<Sejour> sejoursBooked = new ArrayList<>();
+
+        for (Booking booking: bookings) {
+            if (booking.getTraveler().equals(this.traveler)) {
+                if (!booking.isConfirmed()) {
+                    sejoursBooked.add(booking.getSejour());
+                }
+            }
+        }
+        return FXCollections.observableArrayList(sejoursBooked);
+    }
+
 
 
     public List<Sejour> searchSejourByTitle(List<Sejour> sejours, String titleQuery) {
@@ -214,15 +237,18 @@ public class TravelerPage {
         Label priceLabel = new Label("Prix: " + stay.getPrice());
         priceLabel.getStyleClass().add("stay-price");
 
-        Button reserveButton = new Button(typePage == 0 ? "Réserver" : "Annuler");
+        Button reserveButton = new Button(typePage == 0 ? "Ajouter au panier" : "Annuler");
         reserveButton.getStyleClass().add("stay-reserve-button");
         reserveButton.setOnAction(event -> {
             if (typePage == 0) {
-                reservedSejour(stay);
+                panierSejour(stay);
                 updateStaysGrid(sejoursLibres(), 0);
-            } else {
+            } else if (typePage == 1){
                 cancelSejour(stay);
                 updateStaysGrid(sejoursBooked(), 1);
+            } else {
+                cancelSejour(stay);
+                updateStaysGrid(sejoursPanier(), 2);
             }
         });
 
